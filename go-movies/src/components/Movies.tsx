@@ -1,4 +1,5 @@
 // components/Movies.tsx
+import { Link } from 'react-router-dom'
 import { useEffect, useState, Fragment } from 'react'
 import { Movie } from '../models/movie'
 
@@ -27,7 +28,7 @@ const Movies = () => {
 				{movies.map((m) => {
 					return (
 						<li key={m.id}>
-							{m.title}
+							<Link to={`/movies/${m.id}`}>{m.title}</Link>
 						</li>
 					)
 				})}
