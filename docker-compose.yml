@@ -22,3 +22,25 @@ services:
     ports:
       - "3000:3000"
     container_name: frontend
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=go_movies
+    ports:
+      - "5432:5432"
+    container_name: postgres
+
+  postgres-gui:
+    image: donnex/pgweb
+    command: -s --bind=0.0.0.0 --listen=8080 --url postgresql://postgres:secret@postgres/go_movies?sslmode=disable
+    links:
+      - postgres:postgres
+    ports:
+      - "9232:8080"
+    depends_on:
+      - postgres
