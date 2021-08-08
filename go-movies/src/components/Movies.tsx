@@ -2,24 +2,38 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState, Fragment } from 'react'
 import { Movie } from '../models/movie'
+import axios from 'axios'
 
 const Movies = () => {
-	// 仮のデータ
-	const tmpData = [
-		{id: 1, title: "The Shawshank Redemption", runtime: 142},
-		{id: 2, title: "Harry Potter", runtime: 175},
-		{id: 3, title: "The Dark Kngiht", runtime: 142},
-	]
-
 	const [movies, setMovies] = useState<Movie[]>([])
+	const [isLoaded, setIsLoaded] = useState(false)
+	const [error, setError] = useState("")
+
 
 	useEffect(() => {
 		(
-			() => {
-				setMovies(tmpData)
+			async () => {
+				await axios.get('movies')
+					.then((response) => {
+						setMovies(response.data.movies)
+						setIsLoaded(true)
+					})
+					.catch((err) => {
+						setError(err.message)
+					})
 			}
 		)()
-	}, []) // 空配列を第二引数に渡すとマウント・アンマウント時のみ第１引数の関数を実行
+	}, [])
+
+	if (error) {
+		return (
+			<div>Error: {error}</div>
+		)
+	} else if (!isLoaded) {
+		return (
+			<p>Loading...</p>
+		)
+	}
 
 	return (
 		<Fragment>
