@@ -1,22 +1,23 @@
-// components/Movies.tsx
+// components/OneGenre.tsx
+import { useState, useEffect, Fragment } from 'react'
 import { Link } from 'react-router-dom'
-import { useEffect, useState, Fragment } from 'react'
 import { Movie } from '../models/movie'
 import axios from 'axios'
 
-const Movies = () => {
+const OneGenre = (props: any) => {
 	const [movies, setMovies] = useState<Movie[]>([])
 	const [isLoaded, setIsLoaded] = useState(false)
 	const [error, setError] = useState("")
-
+	const [genreName, setGenreName] = useState("")
 
 	useEffect(() => {
 		(
 			async () => {
-				await axios.get('movies')
+				await axios.get('movies/' + props.match.params.id)
 					.then((response) => {
 						setMovies(response.data.movies)
 						setIsLoaded(true)
+						setGenreName(props.location.state.genreName)
 					})
 					.catch((err) => {
 						setError(err.message)
@@ -24,6 +25,10 @@ const Movies = () => {
 			}
 		)()
 	}, [])
+
+	if (!movies) {
+		setMovies([])
+	}
 
 	if (error) {
 		return (
@@ -37,15 +42,13 @@ const Movies = () => {
 
 	return (
 		<Fragment>
-			<h2>Choose a movie</h2>
+			<h2>Genre: {genreName}</h2>
 			<div className="list-group">
-				{movies.map((m) => {
+				{movies.map((m, index) => {
 					return (
-						<Link
-						  key={m.id}
-						  to={`/movies/${m.id}`}
-						  className="list-group-item list-group-item-action"
-						>
+						<Link to={`/movies/${m.id}`}
+							  key={index}
+						      className="list-group-item list-group-item-action">
 							{m.title}
 						</Link>
 					)
@@ -55,4 +58,4 @@ const Movies = () => {
 	)
 }
 
-export default Movies
+export default OneGenre

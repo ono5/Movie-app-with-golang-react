@@ -1,10 +1,11 @@
 // src/App.tsx
-import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import Home from './components/Home'
 import Movies from './components/Movies'
 import Admin from './components/Admin'
-import Categories from './components/Categories'
+import Genres from './components/Genres'
 import OneMovie from './components/OneMovie'
+import OneGenre from './components/OneGenre'
 
 export default function App() {
   return (
@@ -28,7 +29,7 @@ export default function App() {
                   <Link to="/movies">Movies</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/by-category">Categories</Link>
+                  <Link to="/genres">Genres</Link>
                 </li>
                 <li className="list-group-item">
                   <Link to="/admin">Manage Catalog</Link>
@@ -40,24 +41,16 @@ export default function App() {
           <div className="col-md-10">
             <Switch>
               <Route path="/movies/:id" component={OneMovie} />
+
               <Route path="/movies">
                 <Movies />
               </Route>
-              <Route exact path="/by-category">
-                <CategoryPage />
+
+              <Route path="/genre/:id" component={OneGenre} />
+
+              <Route exact path="/genres">
+                <Genres />
               </Route>
-
-              <Route
-                exact
-                path="/by-category/comedy"
-                render={(props) => <Categories {...props} title={`Comedy`}/>}
-              />
-
-              <Route
-                exact
-                path="/by-category/drama"
-                render={(props) => <Categories {...props} title={`Drama`}/>}
-              />
 
               <Route path="/admin">
                 <Admin />
@@ -70,21 +63,5 @@ export default function App() {
         </div>
       </div>
     </Router>
-  )
-}
-
-const CategoryPage = () => {
-  let { path, url } = useRouteMatch()
-  console.log(path, url)
-
-  return (
-    <div>
-      <h2>Categories</h2>
-
-      <ul>
-        <li><Link to={`${path}/comedy`}>Comedy</Link></li>
-        <li><Link to={`${url}/drama`}>Drama</Link></li>
-      </ul>
-    </div>
   )
 }

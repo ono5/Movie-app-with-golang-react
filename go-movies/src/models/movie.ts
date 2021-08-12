@@ -10,3 +10,8 @@ export interface Movie {
 	mpaa_rating: string
 	genres: Array<string>
 }
+
+export interface Genre {
+	id: number
+	genre_name: string
+}
