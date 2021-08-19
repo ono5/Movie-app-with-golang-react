@@ -5,7 +5,7 @@ import axios from 'axios'
 
 const OneMovie = (props: any) => {
 	const [movie, setMovie] = useState<Movie>({
-		id: 0, title: '', description: '', year: 0,
+		id: 0, title: '', description: '', year: "2021",
 		release_date: '', runtime: 0, rating: 0,
 		mpaa_rating: '', genres: []
 	})

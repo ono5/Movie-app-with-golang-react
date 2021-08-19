@@ -3,7 +3,7 @@ export interface Movie {
 	id: number
 	title: string
 	description: string
-	year: number
+	year: string
 	release_date: string
 	runtime: number
 	rating: number
