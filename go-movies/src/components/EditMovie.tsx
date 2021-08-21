@@ -1,9 +1,11 @@
 // components/EditMovie.tsx
 import { Fragment, useEffect, useState } from "react"
+import { AlertType } from '../models/ui-components'
 import { Movie } from '../models/movie'
 import Input from './form-components/Input'
 import TextArea from './form-components/TextArea'
 import Select from './form-components/Select'
+import Alert from './ui-components/Alert'
 import './EditMovie.css'
 import axios from 'axios'
 
@@ -12,6 +14,7 @@ const EditMovie = (props: any) => {
 	const [isLoaded, setIsLoaded] = useState(false)
 	const [error, setError] = useState("")
 	const [errors, setErrors] = useState<string[]>([])
+	const [alert, setAlert] = useState<AlertType>({type: "d-none", message: ""})
 
 	// form data
 	const [id, setID] = useState(0)
@@ -45,6 +48,12 @@ const EditMovie = (props: any) => {
 							const releaseDate = new Date(movie.release_date)
 							movie.release_date = releaseDate.toISOString().split("T")[0]
 							setMovie(movie)
+							setTitle(movie.title)
+							setDescription(movie.description)
+							setReleaseDate(movie.release_date)
+							setRuntime(movie.runtime)
+							setRating(movie.rating)
+							setMpaaRating(movie.mpaa_rating)
 							setIsLoaded(true)
 						})
 						.catch((err) => {
@@ -96,10 +105,11 @@ const EditMovie = (props: any) => {
 
 		await axios.post('admin/editmovie', JSON.stringify(movie))
 			.then((response) => {
-				console.log({response})
+				setAlert({ type: 'alert-success', message: 'Changes saved!' })
 			})
 			.catch((err) => {
 				setError(err.message)
+				setAlert({ type: 'alert-danger', message: err.response.data.error.message })
 			})
 	}
 
@@ -108,9 +118,9 @@ const EditMovie = (props: any) => {
 	}
 
 	if (error) {
-		return (
-			<div>Error: {error}</div>
-		)
+		// return (
+		// 	<div>Error: {error}</div>
+		// )
 	} else if (!isLoaded) {
 		return (
 			<p>Loading...</p>
@@ -120,6 +130,10 @@ const EditMovie = (props: any) => {
 	return (
 		<Fragment>
 			<h2>Add/Edit Movie</h2>
+			<Alert
+				alertType={alert.type}
+				alertMessage={alert.message}
+			/>
 			<hr />
 			<form method="post" onSubmit={submit}>
 				<Input
@@ -127,7 +141,7 @@ const EditMovie = (props: any) => {
 					className={hasError("title") ? "is-invalid" : ""}
 					type={'text'}
 					name={'title'}
-					value={movie?.title}
+					value={title}
 					handleChange={setTitle}
 					errorDiv={hasError("title") ? "text-danger" : "d-none"}
 					errorMsg={"Please enter a title"}
@@ -137,7 +151,7 @@ const EditMovie = (props: any) => {
 					className={hasError("release_date") ? "is-invalid" : ""}
 					type={'date'}
 					name={'release_date'}
-					value={movie?.release_date}
+					value={releaseDate}
 					handleChange={setReleaseDate}
 					errorDiv={hasError("release_date") ? "text-danger" : "d-none"}
 					errorMsg={"Please enter a release_date"}
@@ -147,7 +161,7 @@ const EditMovie = (props: any) => {
 					className={hasError("runtime") ? "is-invalid" : ""}
 					type={'text'}
 					name={'runtime'}
-					value={movie?.runtime}
+					value={runtime}
 					handleChange={setRuntime}
 					errorDiv={hasError("runtime") ? "text-danger" : "d-none"}
 					errorMsg={"Please enter a runtime"}
@@ -156,7 +170,7 @@ const EditMovie = (props: any) => {
 					title={'MPAA Rating'}
 					name={'mpaa_rating'}
 					options={mpaaOptions}
-					value={movie?.mpaa_rating}
+					value={mpaaRating}
 					handleChange={setMpaaRating}
 					placeholder={'Choose...'}
 				/>
@@ -165,7 +179,7 @@ const EditMovie = (props: any) => {
 					className={hasError("rating") ? "is-invalid" : ""}
 					type={'text'}
 					name={'rating'}
-					value={movie?.rating}
+					value={rating}
 					handleChange={setRating}
 					errorDiv={hasError("rating") ? "text-danger" : "d-none"}
 					errorMsg={"Please enter a rating"}
@@ -173,7 +187,7 @@ const EditMovie = (props: any) => {
 				<TextArea
 					title={"Description"}
 					name={'description'}
-					value={movie?.description}
+					value={description}
 					handleChange={setDescription}
 					rows={3}
 				/>
