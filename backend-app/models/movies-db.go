@@ -211,7 +211,7 @@ func (m *DBModel) UpdateMovie(movie Movie) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	stmt := `update into movies set title = $1, description = $2, year = $3,
+	stmt := `update movies set title = $1, description = $2, year = $3,
 	                                release_date = $4, runtime = $5, rating = $6,
 									mpaa_rating = $7, created_at = $8, updated_at = $9
 									where id = $10`

@@ -88,8 +88,8 @@ type MoviePayload struct {
 	Description string `json:"Description"`
 	Year        string `json:"year"`
 	ReleaseDate string `json:"release_date"`
-	RunTime     string `json:"runtime"`
-	Rating      string `json:"rating"`
+	RunTime     int    `json:"runtime"`
+	Rating      int    `json:"rating"`
 	MPAARating  string `json:"mpaa_rating"`
 }
 
@@ -123,8 +123,8 @@ func (app *application) editMovie(w http.ResponseWriter, r *http.Request) {
 	movie.Description = payload.Description
 	movie.ReleaseDate, _ = time.Parse("2006-01-02", payload.ReleaseDate)
 	movie.Year = movie.ReleaseDate.Year()
-	movie.Runtime, _ = strconv.Atoi(payload.RunTime)
-	movie.Rating, _ = strconv.Atoi(payload.Rating)
+	movie.Runtime = payload.RunTime
+	movie.Rating = payload.Rating
 	movie.MPAARating = payload.MPAARating
 	movie.CreatedAt = time.Now()
 	movie.UpdatedAt = time.Now()

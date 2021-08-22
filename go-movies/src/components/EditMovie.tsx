@@ -76,8 +76,8 @@ const EditMovie = (props: any) => {
 			description: description,
 			year: "2021",
 			release_date: releaseDate,
-			runtime: runtime,
-			rating: rating,
+			runtime: Number(runtime),
+			rating: Number(rating),
 			mpaa_rating: mpaaRating,
 			genres: []
 		}
