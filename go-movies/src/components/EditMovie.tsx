@@ -1,7 +1,10 @@
 // components/EditMovie.tsx
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useEffect, useState, SyntheticEvent } from "react"
 import { AlertType } from '../models/ui-components'
 import { Movie } from '../models/movie'
+import { Link } from 'react-router-dom'
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
 import Input from './form-components/Input'
 import TextArea from './form-components/TextArea'
 import Select from './form-components/Select'
@@ -97,7 +100,6 @@ const EditMovie = (props: any) => {
 			localErrors.push("rating")
 		}
 
-		// Errorセット
 		setErrors(localErrors)
 		if (errors.length > 0) {
 			return false
@@ -106,6 +108,9 @@ const EditMovie = (props: any) => {
 		await axios.post('admin/editmovie', JSON.stringify(movie))
 			.then((response) => {
 				setAlert({ type: 'alert-success', message: 'Changes saved!' })
+				props.history.push({
+					pathname: "/admin"
+				})
 			})
 			.catch((err) => {
 				setError(err.message)
@@ -115,6 +120,36 @@ const EditMovie = (props: any) => {
 
 	const hasError = (key: string) => {
 		return errors.indexOf(key) !== -1
+	}
+
+	const confirmDelete = (e: SyntheticEvent) => {
+		e.preventDefault()
+
+		confirmAlert({
+			title: 'Delete Movie?',
+			message: 'Are you sure?',
+			buttons: [
+				{
+					label: 'Yes',
+					onClick: async () => {
+						await axios.get(`admin/deletemovie/${id}`)
+							.then((response) => {
+								props.history.push({
+									pathname: "/admin"
+								})
+							})
+							.catch((err) => {
+								setError(err.message)
+								setAlert({ type: 'alert-danger', message: err.response.data.error.message })
+							})
+					}
+				},
+				{
+					label: 'No',
+					onClick: () => {}
+				}
+			]
+		});
 	}
 
 	if (error) {
@@ -194,6 +229,15 @@ const EditMovie = (props: any) => {
 				<hr />
 
 				<button className="btn btn-primary" type="submit">Save</button>
+				<Link to="/admin" className="btn btn-warning ms-1">Cancel</Link>
+				{id > 0 && (
+					<a
+					  href="#!"
+					  onClick={confirmDelete}
+					  className="btn btn-danger ms-1">
+					   Delete
+					</a>
+				)}
 			</form>
 		</Fragment>
 	)
