@@ -1,8 +1,10 @@
 // components/Login.tsx
-import { useState, Fragment, SyntheticEvent } from 'react'
+import { useEffect, useState, Fragment, SyntheticEvent } from 'react'
 import { AlertType } from '../models/ui-components'
+import { Credentials } from '../models/tokens'
 import Alert from './ui-components/Alert'
 import Input from './form-components/Input'
+import axios from 'axios'
 
 const Login = () => {
 	const [email, setEmail] = useState("")
@@ -11,8 +13,41 @@ const Login = () => {
 	const [errors, setErrors] = useState<string[]>([])
 	const [alert, setAlert] = useState<AlertType>({type: "d-none", message: ""})
 
+
 	const submit = async (e: SyntheticEvent) => {
 		e.preventDefault()
+		// エラー初期化
+		setErrors([])
+
+		let submitErrors: string[] = []
+		if (email === "") {
+			submitErrors.push("email")
+		}
+
+		if (password === "") {
+			submitErrors.push("password")
+		}
+
+		if (submitErrors.length > 0) {
+			setErrors(submitErrors)
+			return
+		}
+
+		const payload: Credentials = {
+			username: email,
+			password: password
+		}
+
+		await axios.post("signin", JSON.stringify(payload))
+			.then((response) => {
+				console.log(response.data)
+			})
+			.catch((err) => {
+				setError(err.response.data.error.message)
+				setAlert({
+					type: "alert-danger",
+					message: err.response.data.error.message})
+			})
 	}
 
 	const hasError = (key: string) => {
