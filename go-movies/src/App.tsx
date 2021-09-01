@@ -1,6 +1,8 @@
 // src/App.tsx
-import { Fragment, useState } from 'react'
+import { Dispatch, Fragment, useState } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { setJWTAction } from './redux/actions/setJWTAction'
 import Home from './components/Home'
 import Movies from './components/Movies'
 import Admin from './components/Admin'
@@ -10,19 +12,14 @@ import OneGenre from './components/OneGenre'
 import EditMovie from './components/EditMovie'
 import Login from './components/Login'
 
-export default function App() {
-  const [jwt, setJWT] = useState("")
-
-  const handleJWTChange = (jwt: string) => {
-    setJWT(jwt)
-  }
+const App = (props: any) => {
 
   const logout = () => {
-    setJWT("")
+    props.setJWT("")
   }
 
   let loginLink
-  if (jwt === "") {
+  if (props.jwt === "") {
     loginLink = <Link to="/login">Login</Link>
 	} else {
     loginLink = <Link to="/logout" onClick={logout}>Logout</Link>
@@ -57,7 +54,7 @@ export default function App() {
                   <Link to="/genres">Genres</Link>
                 </li>
                 {
-                  jwt !== "" &&
+                  props.jwt !== "" &&
                   <Fragment>
                     <li className="list-group-item">
                       <Link to="/admin/movie/0">Add Movie</Link>
@@ -81,7 +78,8 @@ export default function App() {
 
               <Route path="/genre/:id" component={OneGenre} />
 
-              <Route exact path="/login" component={(props: any) => <Login {...props} handleJWTChange={handleJWTChange} />} />
+              <Route exact path="/login" component={(props: any) => <Login {...props} />} />
+
               <Route exact path="/genres">
                 <Genres />
               </Route>
@@ -101,3 +99,16 @@ export default function App() {
     </Router>
   )
 }
+
+// State -> Props
+const mapStateToProps = (state: {jwt: string}) => ({
+  jwt: state.jwt
+})
+
+// Dispatch
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  setJWT: (jwt: string) => dispatch(setJWTAction(jwt))
+})
+
+// AppコンポーネントをRedux Storeに登録
+export default connect(mapStateToProps, mapDispatchToProps)(App)

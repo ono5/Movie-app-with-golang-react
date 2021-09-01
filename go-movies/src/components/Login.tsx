@@ -1,18 +1,19 @@
 // components/Login.tsx
-import { useEffect, useState, Fragment, SyntheticEvent } from 'react'
+import { Dispatch, useState, Fragment, SyntheticEvent } from 'react'
+import { connect } from 'react-redux'
 import { AlertType } from '../models/ui-components'
 import { Credentials } from '../models/tokens'
+import { setJWTAction } from '../redux/actions/setJWTAction'
 import Alert from './ui-components/Alert'
 import Input from './form-components/Input'
 import axios from 'axios'
 
-const Login = () => {
+const Login = (props: any) => {
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [error, setError] = useState("")
 	const [errors, setErrors] = useState<string[]>([])
 	const [alert, setAlert] = useState<AlertType>({type: "d-none", message: ""})
-
 
 	const submit = async (e: SyntheticEvent) => {
 		e.preventDefault()
@@ -40,7 +41,11 @@ const Login = () => {
 
 		await axios.post("signin", JSON.stringify(payload))
 			.then((response) => {
-				console.log(response.data)
+				props.setJWT(response.data.response)
+
+				props.history.push({
+					pathname: "/admin"
+				})
 			})
 			.catch((err) => {
 				setError(err.response.data.error.message)
@@ -89,5 +94,10 @@ const Login = () => {
 	)
 }
 
-
-export default Login
+export default connect( (state: {jwt: string}) => ({
+	jwt: state.jwt
+}),
+(dispatch: Dispatch<any>) => ({
+	setJWT: (jwt: string) => dispatch(setJWTAction(jwt))
+})
+)(Login)
