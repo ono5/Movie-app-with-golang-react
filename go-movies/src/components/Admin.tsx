@@ -1,15 +1,24 @@
 // components/Admin.tsx
-import { Fragment, useEffect, useState } from "react"
+import { Dispatch, Fragment, useEffect, useState } from "react"
+import { connect } from 'react-redux'
+import { setJWTAction } from '../redux/actions/setJWTAction'
 import { Movie } from '../models/movie'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
-const Admin = () => {
+const Admin = (props: any) => {
 	const [movies, setMovies] = useState<Movie[]>([])
 	const [isLoaded, setIsLoaded] = useState(false)
 	const [error, setError] = useState("")
 
 	useEffect(() => {
+		if (props.jwt === "") {
+			props.history.push({
+				pathname: "/login"
+			})
+			return
+		}
+
 		(
 			async () => {
 				await axios.get('movies')
@@ -55,4 +64,10 @@ const Admin = () => {
 	)
 }
 
-export default Admin
+export default connect( (state: {jwt: string}) => ({
+	jwt: state.jwt
+}),
+(dispatch: Dispatch<any>) => ({
+	setJWT: (jwt: string) => dispatch(setJWTAction(jwt))
+})
+)(Admin)

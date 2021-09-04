@@ -1,5 +1,5 @@
 // src/App.tsx
-import { Dispatch, Fragment, useState } from 'react'
+import { Dispatch, Fragment, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { setJWTAction } from './redux/actions/setJWTAction'
@@ -14,8 +14,18 @@ import Login from './components/Login'
 
 const App = (props: any) => {
 
+  useEffect(() => {
+    const jwtToken = window.localStorage.getItem("jwt")
+    if (jwtToken) {
+      if (props.jwt === "") {
+        props.setJWT(JSON.parse(jwtToken))
+      }
+    }
+  })
+
   const logout = () => {
     props.setJWT("")
+    window.localStorage.removeItem("jwt")
   }
 
   let loginLink
@@ -86,9 +96,8 @@ const App = (props: any) => {
 
               <Route path="/admin/movie/:id" component={EditMovie} />
 
-              <Route path="/admin">
-                <Admin />
-              </Route>
+              <Route path="/admin" component={Admin} />
+
               <Route path="/">
                 <Home />
               </Route>

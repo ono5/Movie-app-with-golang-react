@@ -1,5 +1,7 @@
 // components/EditMovie.tsx
-import { Fragment, useEffect, useState, SyntheticEvent } from "react"
+import { Dispatch, Fragment, useEffect, useState, SyntheticEvent } from "react"
+import { connect } from 'react-redux'
+import { setJWTAction } from '../redux/actions/setJWTAction'
 import { AlertType } from '../models/ui-components'
 import { Movie } from '../models/movie'
 import { Link } from 'react-router-dom'
@@ -30,6 +32,13 @@ const EditMovie = (props: any) => {
 	const [mpaaOptions, setMpaaOptions] = useState([{}])
 
 	useEffect(() => {
+		if (props.jwt === "") {
+			props.history.push({
+				pathname: "/login"
+			})
+			return
+		}
+
 		(
 			async () => {
 				setMpaaOptions([
@@ -105,7 +114,14 @@ const EditMovie = (props: any) => {
 			return false
 		}
 
-		await axios.post('admin/editmovie', JSON.stringify(movie))
+		const config = {
+			headers: {
+                'Content-Type': 'application/json',
+				'Authorization': `Bearer ${props.jwt}`
+            }
+		}
+
+		await axios.post('admin/editmovie', JSON.stringify(movie), config)
 			.then((response) => {
 				setAlert({ type: 'alert-success', message: 'Changes saved!' })
 				props.history.push({
@@ -243,4 +259,10 @@ const EditMovie = (props: any) => {
 	)
 }
 
-export default EditMovie
+export default connect( (state: {jwt: string}) => ({
+	jwt: state.jwt
+}),
+(dispatch: Dispatch<any>) => ({
+	setJWT: (jwt: string) => dispatch(setJWTAction(jwt))
+})
+)(EditMovie)

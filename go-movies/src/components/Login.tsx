@@ -41,7 +41,11 @@ const Login = (props: any) => {
 
 		await axios.post("signin", JSON.stringify(payload))
 			.then((response) => {
-				props.setJWT(response.data.response)
+				const jwtToken = response.data.response
+				props.setJWT(jwtToken)
+				window.localStorage.setItem(
+					"jwt",
+					JSON.stringify(jwtToken))
 
 				props.history.push({
 					pathname: "/admin"
