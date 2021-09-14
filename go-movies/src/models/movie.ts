@@ -9,6 +9,7 @@ export interface Movie {
 	rating: number
 	mpaa_rating: string
 	genres: Array<string>
+	poster: string
 }
 
 export interface Genre {

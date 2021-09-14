@@ -1,9 +1,9 @@
-// components/OneMovie.tsx
+// components/OneMovieGraphQL.tsx
 import { useEffect, useState, Fragment } from 'react'
 import { Movie } from '../models/movie'
 import axios from 'axios'
 
-const OneMovie = (props: any) => {
+const OneMovieGraphQL = (props: any) => {
 	const [movie, setMovie] = useState<Movie>({
 		id: 0, title: '', description: '', year: "2021",
 		release_date: '', runtime: 0, rating: 0,
@@ -13,19 +13,40 @@ const OneMovie = (props: any) => {
 	const [error, setError] = useState("")
 
 	useEffect(() => {
-		(
-			async () => {
-				await axios.get(`movie/${props.match.params.id}`)
-					.then((response) => {
-						setMovie(response.data.movie)
-						setIsLoaded(true)
-					})
-					.catch((err) => {
-						setError(err.message)
-					})
+		const payload = `
+			{
+				movie(id: ${props.match.params.id}) {
+					id
+					title
+					runtime
+					year
+					description
+					release_date
+					rating
+					mpaa_rating
+					poster
+				}
 			}
-		)()
+		`
+		graphQLRequest(payload)
+
 	}, [])
+
+	const graphQLRequest = async (payload: string) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}
+		await axios.post('graphql', payload, config)
+			.then((response) => {
+				setMovie(response.data.data.movie)
+				setIsLoaded(true)
+			})
+			.catch((err) => {
+				setError(err.message)
+			})
+	}
 
 	// mapを使えるようにするために配列にする
 	if (movie.genres) {
@@ -47,6 +68,13 @@ const OneMovie = (props: any) => {
 	return (
 		<Fragment>
 			<h2>Movie: {movie.title} ({movie.year})</h2>
+
+			{movie.poster !== "" && (
+				<div>
+					<img src={`http://image.tmdb.org/t/p/w200${movie.poster}`} alt="poster" />
+				</div>
+			)}
+
 			<div className="float-start">
 				<small>Raging: {movie.mpaa_rating}</small>
 			</div>
@@ -83,4 +111,4 @@ const OneMovie = (props: any) => {
 	)
 }
 
-export default OneMovie
+export default OneMovieGraphQL

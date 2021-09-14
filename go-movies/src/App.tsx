@@ -12,6 +12,7 @@ import OneGenre from './components/OneGenre'
 import EditMovie from './components/EditMovie'
 import Login from './components/Login'
 import GraphQL from './components/GraphQL'
+import OneMovieGraphQL from './components/OneMovieGraphQL'
 
 const App = (props: any) => {
 
@@ -85,6 +86,7 @@ const App = (props: any) => {
           <div className="col-md-10">
             <Switch>
               <Route path="/movies/:id" component={OneMovie} />
+              <Route path="/moviesgraphql/:id" component={OneMovieGraphQL} />
 
               <Route path="/movies">
                 <Movies />

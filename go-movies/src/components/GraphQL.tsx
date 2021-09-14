@@ -109,10 +109,16 @@ const GraphQL = (props: any) => {
 					return (
 						<Link
 						  key={m.id}
-						  to={`/movies/${m.id}`}
+						  to={`/moviesgraphql/${m.id}`}
 						  className="list-group-item list-group-item-action"
 						>
 							<strong>{m.title}</strong>
+							<br />
+							<small className="text-muted">
+								({m.year}) - {m.runtime} minutes
+							</small>
+							<br />
+							{m.description.slice(0, 100)}
 						</Link>
 					)
 				})}

@@ -8,6 +8,8 @@ services:
       dockerfile: ./Dockerfile-golang
     ports:
       - 4000:4000
+    environment:
+      - TMDB_KEY=$TMDB_KEY
     volumes:
       - ./backend-app:/app
 

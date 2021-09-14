@@ -91,7 +91,8 @@ const EditMovie = (props: any) => {
 			runtime: Number(runtime),
 			rating: Number(rating),
 			mpaa_rating: mpaaRating,
-			genres: []
+			genres: [],
+			poster: "",
 		}
 
 		// validation
